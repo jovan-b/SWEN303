@@ -9,3 +9,11 @@ block body
 	.container
 		h1= title
 		p Welcome to #{title}
+	.container
+		.row
+			.col-lg-6
+				form(action="/search", method="get")
+					.input-group
+						input.form-control(type="text", name="searchString", placeholder='Search for...')
+						span.input-group-btn
+							button.btn.btn-default(id="submitSearch", type="submit") Search

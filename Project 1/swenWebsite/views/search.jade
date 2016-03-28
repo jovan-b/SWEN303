@@ -1,0 +1,12 @@
+extends ../node_modules/jade-bootstrap/_bootstrap
+
+head
+	title= title
+block body
+	+navbar("Colenso Project", "dropdown_menu")
+		+nav_item("/", "active") Home
+		
+	.container
+		h1= "Search results"
+		.container
+			p !{content}
