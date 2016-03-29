@@ -62,11 +62,11 @@ router.get('/view', function(req, res) {
 	client.execute("XQUERY doc('" + path + "')", 
 	function(error,result) { 
 		if(!error){
-			res.render('view', { title: 'Colenso Project | '+id, content: result.result, id: id});	
+			res.render('view', { title: 'Colenso Project | '+id, content: result.result, id: id, path: path});	
 		}
 		else{
 			console.log(error);
-			res.render('view', { title: 'Colenso Project | Error' });
+			res.render('view', { title: 'Colenso Project | Error'});
 		}
 	})
 	
@@ -80,5 +80,22 @@ router.get('/findxml', function(req, res) {
 	})
 });
 
+router.get('/download', function(req, res) {
+	var path = req.query.path;
+	var id = req.query.id;
+	client.execute("XQUERY doc('" + path + "')", 
+	function(error,result) { 
+		if(!error){
+			var content = result.result
+			res.setHeader('Content-disposition', 'attachment; filename='+id+'.xml');
+			res.write("<?xml version='1.0' encoding='utf-8'?>\n");
+			res.write(content);
+			res.end();
+		}
+		else{
+			console.log(error);
+		}
+	})
+});
 
 module.exports = router;

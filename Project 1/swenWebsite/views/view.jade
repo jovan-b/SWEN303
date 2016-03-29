@@ -28,5 +28,6 @@ block body
 	.container
 		if content != undefined
 			p !{content}
+			+a-btn-primary("download?path="+path+"&id="+id) Download
 		else
 			+alert-info("No xml document found. Make sure the path is correct.")
