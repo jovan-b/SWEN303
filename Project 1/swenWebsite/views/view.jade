@@ -4,11 +4,7 @@ head
 	title= title
 block body
 	+navbar("Colenso Project", "dropdown_menu")
-		+nav_item("/", "active") Home
-		
-	.container
-		h1= title
-		p Welcome to the Colenso Project document database.
+		+nav_item("/", "") Home
 	.container
 		.row
 			.col-lg-6
@@ -16,5 +12,14 @@ block body
 					.input-group
 						input.form-control(type="text", name="searchString", placeholder='Search for...')
 						span.input-group-btn
-							button.btn.btn-default(id="submitSearch", type="submit") Search
-					+checkbox("XPath / XQuery search", name="xSearch", checked=xSearch)
+							button.btn.btn-default(id="submitSearch", type="submit") Search	
+	.container
+		if id.length > 0
+			h1= id
+		else
+			h1= 'Colenso Project database document'
+	.container
+		if content != undefined
+			p !{content}
+		else
+			+alert-info("No xml document found. Make sure the path is correct.")

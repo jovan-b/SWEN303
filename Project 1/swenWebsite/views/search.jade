@@ -4,9 +4,24 @@ head
 	title= title
 block body
 	+navbar("Colenso Project", "dropdown_menu")
-		+nav_item("/", "active") Home
-		
+		+nav_item("/", "") Home
 	.container
-		h1= "Search results"
+		.row
+			.col-lg-6
+				form(action="/search", method="get")
+					.input-group
+						input.form-control(type="text", name="searchString", placeholder=search)
+						span.input-group-btn
+							button.btn.btn-default(id="submitSearch", type="submit") Search
+	.container
+		h1= title
 		.container
-			p !{content}
+			if results != undefined && results.length > 0
+				ul
+					each doc in results
+						li
+							a(href='findxml?id='+doc.id) #{doc.title}
+							p #{doc.author}, #{doc.id}
+							br
+			else
+				+alert-info("No results found")
