@@ -13,8 +13,14 @@ block body
 		.row
 			.col-lg-6
 				form(action="/search", method="get")
-					.input-group
-						input.form-control(type="text", name="searchString", placeholder='Search for...')
-						span.input-group-btn
-							button.btn.btn-default(id="submitSearch", type="submit") Search
-					+checkbox("XPath / XQuery search", name="xSearch", checked=xSearch)
+					+tab-list(["Text","XQuery"],0)
+						+tab("Text", "active")
+							.input-group
+								input.form-control(type="text", name="searchString", placeholder='Search text strings')
+								span.input-group-btn
+									button.btn.btn-default(type="submit") Search
+						+tab("XQuery")
+							.input-group
+								input.form-control(type="text", name="searchMarkup", placeholder='Search by markup')
+								span.input-group-btn
+									button.btn.btn-default(type="submit") Search
