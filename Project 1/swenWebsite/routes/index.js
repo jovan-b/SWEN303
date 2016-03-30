@@ -88,10 +88,10 @@ router.get('/xsearch', function(req, res) {
 });
 
 router.get('/view', function(req, res) {
-	var path = 'Colenso/' + req.query.path;
+	var path = req.query.path;
 	var id = req.query.id;
 	/* Get the raw TEI and display it on the web page */
-	client.execute("XQUERY doc('" + path + "')", 
+	client.execute("XQUERY doc('Colenso/" + path + "')", 
 	function(error,result) { 
 		if(!error){
 			res.render('view', { title: 'Colenso Project | '+id, content: result.result, id: id, path: path});	
@@ -130,7 +130,7 @@ router.get('/browseall', function(req, res) {
 });
 
 router.get('/download', function(req, res) {
-	var path = req.query.path;
+	var path = 'Colenso/'+req.query.path;
 	var id = req.query.id;
 	/* Get the raw TEI */
 	client.execute("XQUERY doc('" + path + "')", 
@@ -145,6 +145,7 @@ router.get('/download', function(req, res) {
 		}
 		else{
 			console.log(error);
+			res.render('index', { title: 'Colenso Project | Home', reportMsg: 'Error: Cannot find file to download.'});
 		}
 	})
 });
@@ -182,6 +183,20 @@ router.post('/upload', upload.single('file'), function (req, res) {
 		res.render('upload', { title: 'Colenso Project | Upload',
 			reportMsg: 'Error: No file chosen'});
 	}
+});
+
+router.post('/edit', function(req, res){
+	var editText = req.body.editText;
+	var path = req.query.path;
+	client.execute("REPLACE "+path+" "+editText, function(error, result){
+		if(!error){
+			res.render('index', { title: 'Colenso Project | Home', reportMsg: 'Succesfully edited'});	
+		}
+		else{
+			console.log(error);
+			res.render('index', { title: 'Colenso Project | Home', reportMsg: 'Error: Unable to edit.'});	
+		}
+	});
 });
 
 
