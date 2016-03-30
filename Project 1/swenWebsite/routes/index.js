@@ -138,7 +138,7 @@ router.get('/download', function(req, res) {
 		if(!error){
 			var content = result.result
 			/* Set it up to send as an attachment and write the xml content into the file */
-			res.setHeader('Content-disposition', 'attachment; filename='+id+'.xml');
+			res.setHeader('Content-disposition', 'attachment; filename='+id);
 			res.write("<?xml version='1.0' encoding='utf-8'?>\n");
 			res.write(content);
 			res.end();
@@ -157,9 +157,11 @@ router.get('/upload', function(req, res) {
 router.post('/upload', upload.single('file'), function (req, res) {
 	if(req.file != undefined){
 		var path = req.file.path;
-		var name = req.file.originalname;
+		var name = req.file.originalname;\
+		/* Read the file and save it in data*/
 		fs.readFile(path, "utf-8", function(error, data) {
 			if(!error){
+				/* Add the uploaded file to the database */
 				client.execute('ADD TO Colenso/uploaded_files/'+name+' "'+data+'"',
 				function(error, result){
 					if(!error){
@@ -188,6 +190,7 @@ router.post('/upload', upload.single('file'), function (req, res) {
 router.post('/edit', function(req, res){
 	var editText = req.body.editText;
 	var path = req.query.path;
+	/* Replace the XML doc with the edit text box */
 	client.execute("REPLACE "+path+" "+editText, function(error, result){
 		if(!error){
 			res.render('index', { title: 'Colenso Project | Home', reportMsg: 'Succesfully edited'});	
