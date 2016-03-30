@@ -11,7 +11,9 @@ block body
 	.container
 		h1= 'Upload XML document'
 	.container
+		if reportMsg != undefined
+			+alert-info(reportMsg)
 		h3= 'Upload file to database'
-		form(action='/upload', method='post')
-			input(type="file", name="xmlFile")
+		form(action='/upload', method='post', enctype="multipart/form-data")
+			input(type="file", name="file")
 			button.btn.btn-default(type="submit") Upload to database

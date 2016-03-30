@@ -1,12 +1,13 @@
 var express = require('express');
 var router = express.Router();
 var cheerio = require('cheerio');
-var multer  = require('multer')
-var upload = multer({ dest: 'uploads/' })
+var basex = require('basex');
+var fs = require('fs');
+var multer  = require('multer');
+var upload = multer({ dest: 'uploads/' });
 
 var tei = "XQUERY declare default element namespace 'http://www.tei-c.org/ns/1.0'; ";
 
-var basex = require('basex');
 var client = new basex.Session("localhost", 1984, "admin", "admin");
 client.execute("open Colenso");
 
@@ -149,12 +150,38 @@ router.get('/download', function(req, res) {
 });
 
 router.get('/upload', function(req, res) {
-	res.render('upload');
+	res.render('upload', { title: 'Colenso Project | Upload'});
 });
 
-router.post('/upload', upload.single('xmlFile'), function (req, res) {
-	console.log(req.xmlFile);
-	res.redirect('/');
+router.post('/upload', upload.single('file'), function (req, res) {
+	if(req.file != undefined){
+		var path = req.file.path;
+		var name = req.file.originalname;
+		fs.readFile(path, "utf-8", function(error, data) {
+			if(!error){
+				client.execute('ADD TO Colenso/uploaded_files/'+name+' "'+data+'"',
+				function(error, result){
+					if(!error){
+						res.render('upload', { title: 'Colenso Project | Upload',
+							reportMsg: 'File successfully uploaded to database.'});
+					}
+					else{
+						res.render('upload', { title: 'Colenso Project | Upload',
+							reportMsg: 'Error: File could not be uploaded.'});
+					}
+				});
+			}
+			else{
+				console.log(error);
+				res.render('upload', { title: 'Colenso Project | Upload',
+					reportMsg: 'Error: Could not read file.'});
+			}
+		});
+	}
+	else{
+		res.render('upload', { title: 'Colenso Project | Upload',
+			reportMsg: 'Error: No file chosen'});
+	}
 });
 
 
