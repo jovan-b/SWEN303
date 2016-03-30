@@ -22,7 +22,9 @@ router.get('/search', function(req, res) {
 	var searchResults = [];
 	var query;
 	
+	/* Check both strings to see what type of search the user is after */
 	if(searchString.length != 0){
+		/* Replace all occurances of AND, OR and NOT with the xQuery equivalents */
 		var logicalString = searchString
 			.replace(" AND ", '\' ftand \'')
 			.replace(" OR ", '\' ftor \'')
@@ -34,9 +36,11 @@ router.get('/search', function(req, res) {
 		query = tei + searchMarkup;
 	}
 	
+	/* Execute the query and load the results */
 	client.execute(query,
 	function(error,result){ 
 		if(!error){ 
+			/* Pass the results into cheerio to return a list with the title, author and ID */
 			var data = cheerio.load(result.result,{
 				xmlMode: true
 			});
@@ -48,6 +52,7 @@ router.get('/search', function(req, res) {
 					id: elem.attr('xml:id')
 				});
 			});
+			/* If we had search results, pass it onto the search page, else redirect to the xquery search */
 			if(searchResults.length != 0){
 				res.render('search', { title: 'Colenso Project | Search Results', results: searchResults,
 									searchString: searchString});
@@ -69,6 +74,7 @@ router.get('/xsearch', function(req, res) {
 	client.execute(query,
 	function(error, result){
 		if(!error){
+			/* Split the paths into their own array item and display the search results */
 			var queryResults = result.result.split('\n');
 			res.render('xsearch', { title: 'Colenso Project | Search Results', results: queryResults,
 									searchMarkup: search});
@@ -83,6 +89,7 @@ router.get('/xsearch', function(req, res) {
 router.get('/view', function(req, res) {
 	var path = 'Colenso/' + req.query.path;
 	var id = req.query.id;
+	/* Get the raw TEI and display it on the web page */
 	client.execute("XQUERY doc('" + path + "')", 
 	function(error,result) { 
 		if(!error){
@@ -98,19 +105,38 @@ router.get('/view', function(req, res) {
 
 router.get('/findxml', function(req, res) {
 	var id = req.query.id;
+	/* Returns the path from the XML documents ID */
 	client.execute(tei +  "for $x in //TEI[@xml:id='" + id + "'] return db:path($x)" ,
 	function(error, result){	
 		res.redirect('/view?path='+result.result+'&id='+id);
 	})
 });
 
+router.get('/browseall', function(req, res) {
+	/* Get all XML paths in the database and display the results */
+	client.execute("XQUERY db:list('Colenso')",
+		function (error, result) {
+			if(!error){ 
+				var allXml = result.result.split('\n');
+				res.render('browseall', { title: 'Colenso Project | All Documents', results: allXml});
+			}
+			else {
+				console.error(error);
+				res.render('browseall', { title: 'Colenso Project | Error'});
+			}
+		}
+	);
+});
+
 router.get('/download', function(req, res) {
 	var path = req.query.path;
 	var id = req.query.id;
+	/* Get the raw TEI */
 	client.execute("XQUERY doc('" + path + "')", 
 	function(error,result) { 
 		if(!error){
 			var content = result.result
+			/* Set it up to send as an attachment and write the xml content into the file */
 			res.setHeader('Content-disposition', 'attachment; filename='+id+'.xml');
 			res.write("<?xml version='1.0' encoding='utf-8'?>\n");
 			res.write(content);

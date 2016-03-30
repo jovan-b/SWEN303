@@ -4,12 +4,9 @@ head
 	title= title
 block body
 	+navbar("Colenso Project", "dropdown_menu")
-		+nav_item("/", "active") Home
-		+nav_item("/browseall", "") Browse Documents
+		+nav_item("/", "") Home
+		+nav_item("/browseall", "active") Browse Documents
 		+nav_item("/upload", "") Upload
-	.container
-		h1= title
-		p Welcome to the Colenso Project document database.
 	.container
 		.row
 			.col-lg-6
@@ -25,3 +22,13 @@ block body
 								input.form-control(type="text", name="searchMarkup", placeholder='Search by markup..')
 								span.input-group-btn
 									button.btn.btn-default(type="submit") Search
+	.container
+		h1= title
+		.container
+			if results != undefined && results.length > 0
+					ul
+						each doc in results
+							li
+								a(href='view?path='+doc+'&id='+doc) #{doc}
+			else
+				+alert-info("No results found")
