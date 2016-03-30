@@ -10,25 +10,25 @@ block body
 		.row
 			.col-lg-6
 				form(action="/search", method="get")
-					+tab-list(["Text","XQuery"],0)
-						+tab("Text", "active")
+					+tab-list(["XQuery","Text"],0)
+						+tab("Text")
 							.input-group
 								input.form-control(type="text", name="searchString", placeholder='Search text strings..')
 								span.input-group-btn
 									button.btn.btn-default(type="submit") Search
-						+tab("XQuery")
+						+tab("XQuery", "active")
 							.input-group
-								input.form-control(type="text", name="searchMarkup", placeholder='Search by markup..')
+								input.form-control(type="text", name="searchMarkup", placeholder=searchMarkup)
 								span.input-group-btn
 									button.btn.btn-default(type="submit") Search
+
 	.container
-		if id != undefined
-			h1= id
-		else
-			h1= 'Colenso Project database document'
-	.container
-		if content != undefined
-			p !{content}
-			+a-btn-primary("download?path="+path+"&id="+id) Download
-		else
-			+alert-info("No xml document found. Make sure the path is correct.")
+		h1= title
+		.container
+			if results != undefined && results.length > 0
+					ul
+						each doc in results
+							li
+								a(href='view?path='+doc+'&id='+doc) #{doc}
+			else
+				+alert-info("No results found")

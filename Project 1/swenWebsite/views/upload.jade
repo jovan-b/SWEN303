@@ -1,0 +1,16 @@
+extends ../node_modules/jade-bootstrap/_bootstrap
+
+head
+	title= title
+block body
+	+navbar("Colenso Project", "dropdown_menu")
+		+nav_item("/", "") Home
+		+nav_item("/upload", "active") Upload
+		
+	.container
+		h1= 'Upload XML document'
+	.container
+		h3= 'Upload file to database'
+		form(action='/upload', method='post')
+			input(type="file", name="xmlFile")
+			button.btn.btn-default(type="submit") Upload to database

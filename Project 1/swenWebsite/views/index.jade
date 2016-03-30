@@ -5,7 +5,7 @@ head
 block body
 	+navbar("Colenso Project", "dropdown_menu")
 		+nav_item("/", "active") Home
-		
+		+nav_item("/upload", "") Upload
 	.container
 		h1= title
 		p Welcome to the Colenso Project document database.
@@ -16,11 +16,11 @@ block body
 					+tab-list(["Text","XQuery"],0)
 						+tab("Text", "active")
 							.input-group
-								input.form-control(type="text", name="searchString", placeholder='Search text strings')
+								input.form-control(type="text", name="searchString", placeholder='Search text strings..')
 								span.input-group-btn
 									button.btn.btn-default(type="submit") Search
 						+tab("XQuery")
 							.input-group
-								input.form-control(type="text", name="searchMarkup", placeholder='Search by markup')
+								input.form-control(type="text", name="searchMarkup", placeholder='Search by markup..')
 								span.input-group-btn
 									button.btn.btn-default(type="submit") Search
